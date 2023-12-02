@@ -29,16 +29,6 @@ export function getParsedSetsOfCubes(game: string): Set[][] {
   return parsedSetsOfCubes
 }
 
-// function getSumOfCubesByColor(setsOfCubes: Set[][]): { [key: string]: number } {
-//   return setsOfCubes.reduce((acc, curr) => {
-//     curr.forEach((cube) => {
-//       acc[cube.color] = acc[cube.color] ? acc[cube.color] + cube.value : cube.value
-//     })
-
-//     return acc
-//   }, {})
-// }
-
 export function isGamePossible(game: string, givenCubes: { [key: string]: number; }): boolean {
   const parsedSetsOfCubes = getParsedSetsOfCubes(game).flat()
   
@@ -61,3 +51,40 @@ export function puzzle1(input: string) {
 }
 
 console.log(puzzle1(input))
+
+export function getFewestNumbersOfCubesRequired(sets: Set[]): { [key: string]: number; } {
+  const fewestNumbersOfCubesRequired = sets.reduce((acc, curr) => {
+    if (!curr) return acc
+
+    if (!acc[curr.color]) {
+      acc[curr.color] = 0
+    }
+
+    if (acc[curr.color] < curr.value) {
+      acc[curr.color] = curr.value
+    }
+
+    return acc
+  }, {})
+
+  return fewestNumbersOfCubesRequired
+}
+
+export function getPowerOfSet(fewestNumbersOfCubesRequired: { [key: string]: number; }): number {
+  return fewestNumbersOfCubesRequired['blue'] * fewestNumbersOfCubesRequired['red'] * fewestNumbersOfCubesRequired['green']
+}
+
+export function puzzle2(input: string) {
+  return input.split('\n').reduce((acc, curr) => {
+    if (curr?.length === 0) return acc
+
+    const parsedSetsOfCubes = getParsedSetsOfCubes(curr).flat()
+    const fewestNumbersOfCubesRequired = getFewestNumbersOfCubesRequired(parsedSetsOfCubes)
+    const powerOfSet = getPowerOfSet(fewestNumbersOfCubesRequired)
+
+    return acc + powerOfSet
+  }, 0)
+}
+
+console.log(puzzle2(input))
+
